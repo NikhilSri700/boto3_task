@@ -1,13 +1,17 @@
 import boto3
 import os
 
+'''
+Globally creating aws session and two s3 console using both client and resource
+'''
 session = boto3.session.Session(
     profile_name='nikhil', region_name='ap-south-1')
 s3_console_resource = session.resource(service_name='s3')
 s3_console_client = session.client(service_name='s3')
-bucket_name = ''
+bucket_name = 'training-wg-cloud-ir-my-bucket-test'
 
 
+# Function for creating creating a s3 bucket
 def create_s3_bucket():
     global bucket_name
     name = input("Enter your name: ")
@@ -24,6 +28,7 @@ def create_s3_bucket():
         print(error)
 
 
+# Function for enabling bucket versioning in s3
 def enable_bucket_verisoning():
     try:
         s3_console_client.put_bucket_versioning(
@@ -37,6 +42,7 @@ def enable_bucket_verisoning():
         print(error)
 
 
+# Function for suspending bucket versioning in s3
 def suspend_bucket_verisoning():
     try:
         s3_console_client.put_bucket_versioning(
@@ -50,6 +56,7 @@ def suspend_bucket_verisoning():
         print(error)
 
 
+# Function will create a bucket key and put 2500 object in it at once
 def create_folder_and_put_object():
     original_name = 'sample'
     s3_folder_path = 'images/'
@@ -64,6 +71,7 @@ def create_folder_and_put_object():
     os.rename(temp_name + '.jpg', original_name + '.jpg')
 
 
+# Function for retrieving all the objects from s3 bucket at a time using pagination
 def retrieve_all_objects():
     paginator = s3_console_client.get_paginator('list_objects')
     cnt = 1
@@ -73,7 +81,7 @@ def retrieve_all_objects():
             cnt += 1
 
 
-
+# Function will delete all the objects from the bucket
 def empty_bucket():
     s3_bucket = s3_console_resource.Bucket(bucket_name)
     try:
@@ -83,6 +91,7 @@ def empty_bucket():
         print(error)
 
 
+# Function for deleting the s3 bucket
 def delete_bucket():
     try:
         s3_console_client.delete_bucket(Bucket=bucket_name)
